@@ -115,8 +115,7 @@ MyString operator+(const MyString& str1, const MyString& str2) {
 		arrCharItog[i1] = str1.GetChar(i1);
 	}
 	for (size_t i2 = 0; i2 < str2.GetLen() - 1; i2++) {
-		arrCharItog[i1] = str2.GetChar(i2);
-		i1++;
+		arrCharItog[i1++] = str2.GetChar(i2);
 	}
 	arrCharItog[itogLen - 1] = '\0';
 	MyString itogStr(arrCharItog);
@@ -132,8 +131,7 @@ MyString operator+(const char* str1, const MyString& str2) {
 		itogArrChar[i1] = str1[i1];
 	}
 	for (size_t i2 = 0; i2 < (str2.GetLen() - 1); i2++) {
-		itogArrChar[i1] = str2.GetChar(i2);
-		i1++;
+		itogArrChar[i1++] = str2.GetChar(i2);
 	}
 	itogArrChar[itogLen - 1] = '\0';
 	MyString itogStr(itogArrChar);
@@ -149,8 +147,7 @@ MyString operator+(const MyString& str1, const char* str2) {
 		itogArrChar[i1] = str1.GetChar(i1);
 	}
 	for (size_t i2 = 0; i2 < strlen(str2); i2++) {
-		itogArrChar[i1] = str2[i2];
-		i1++;
+		itogArrChar[i1++] = str2[i2];
 	}
 	itogArrChar[itogSize - 1] = '\0';
 	MyString itogStr(itogArrChar);
@@ -164,9 +161,31 @@ ostream& operator<<(ostream& os, const MyString& mStr) {
 }
 
 istream& operator>>(istream& is, MyString& mStr) {
-	char tmpArr[1024];
-	is >> tmpArr;
-	mStr = MyString(tmpArr);
+	size_t capacity=16;
+	size_t size=0;
+	char* tmp = new char[capacity];
+	char c;
+	while (is.get(c)) {
+		if (c == ' ' || c == '\t' || c == '\n') {
+			break;
+		}
+		else {
+			tmp[size++] = c;
+			if (size == capacity - 1) {
+				capacity += 16;
+				char* tmp2 = new char[capacity];
+				for (size_t i = 0; i < size; i++) {
+					tmp2[i] = tmp[i];
+				}
+				delete[] tmp;
+				tmp = tmp2;
+				tmp2 = nullptr;
+			}
+		}
+	}
+	tmp[size] = '\0';
+	mStr = MyString(tmp);
+	delete[] tmp;
 	return is;
 }
 
